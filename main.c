@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/11/30 17:39:57 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/11/30 20:00:31 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,18 @@
 	return (cds)
 } */
 
+void	white_line(map	*cds)
+{
+	int	c;
+
+	c = 0;
+	while (c < 10)
+	{
+		mlx_pixel_put(MLX, WIN, X + c, Y, 0x88FFFFFF);
+		c++;
+	}
+}
+
 void	window_handler(char	*file)
 {
 	map		*cds;
@@ -47,18 +59,21 @@ void	window_handler(char	*file)
 	while (line[i])
 	{
 		if (line[i] == ' ')
-		{
 			i++;
-		}
 		if (line[i] == '0')
 		{
-			i++;
 			if (line[i - 1] != '1')
+			{
+				mlx_pixel_put(MLX, WIN, X, Y, 0x00FFFFFF);
+				white_line(cds);
 				X += 10;
+			}
+			i++;
 		}
 		if (line[i] == '1')
 		{
-			mlx_pixel_put(MLX, WIN, X, Y, 0x0055FF55);
+			white_line(cds);
+			mlx_pixel_put(MLX, WIN, X, Y, 0x0000FF00);
 			i++;
 			X += 10;
 		
