@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/11/30 20:00:31 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/11/30 20:30:50 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,49 @@ void	white_line(map	*cds)
 		mlx_pixel_put(MLX, WIN, X + c, Y, 0x88FFFFFF);
 		c++;
 	}
+	c = 0;
+	while (c < 10)
+	{
+		mlx_pixel_put(MLX, WIN, X, Y + c, 0x88FFFFFF);
+		c++;
+	}
+}
+
+void	green_line(map	*cds)
+{
+	int	c;
+
+	c = 0;
+	while (c < 10)
+	{
+		mlx_pixel_put(MLX, WIN, X + c, Y, 0x0000FF00);
+		c++;
+	}
+	c = 0;
+	while (c < 10)
+	{
+		mlx_pixel_put(MLX, WIN, X, Y + c, 0x0000FF00);
+		c++;
+	}
+}
+
+void	closer(map *cds)
+{
+	int x2;
+	int y2;
+
+	x2 = 50;
+	while (x2 < X)
+	{
+		mlx_pixel_put(MLX, WIN, x2, Y, 0x88FFFFFF);
+		x2++;
+	}
+	y2 = 50;
+	while (y2 < Y)
+	{
+		mlx_pixel_put(MLX, WIN, X, y2, 0x88FFFFFF);
+		y2++;
+	}
 }
 
 void	window_handler(char	*file)
@@ -47,12 +90,13 @@ void	window_handler(char	*file)
 	int		i;
 	int		fd;
 	char	*line;
+	int		max;
 
 	fd = open(file, O_RDONLY);
 	i = 0;
 	cds = (map*)malloc(sizeof(map));
-	X = 0;
-	Y = 0;
+	X = 50;
+	Y = 50;
 	MLX = mlx_init();
 	WIN = mlx_new_window(MLX, 400, 400, "FUCKING SHIT");
 	get_next_line(fd, &line);
@@ -64,7 +108,6 @@ void	window_handler(char	*file)
 		{
 			if (line[i - 1] != '1')
 			{
-				mlx_pixel_put(MLX, WIN, X, Y, 0x00FFFFFF);
 				white_line(cds);
 				X += 10;
 			}
@@ -72,7 +115,7 @@ void	window_handler(char	*file)
 		}
 		if (line[i] == '1')
 		{
-			white_line(cds);
+			green_line(cds);
 			mlx_pixel_put(MLX, WIN, X, Y, 0x0000FF00);
 			i++;
 			X += 10;
@@ -81,11 +124,14 @@ void	window_handler(char	*file)
 		if (line[i] != '1' && line[i] != '0' && line[i] != ' ')
 		{
 			Y += 10;
-			X = 0;
+			max = X;
+			X = 50;
 			get_next_line(fd, &line);
 			i = 0;
 		}
 	}
+	X = max;
+	closer(cds);
 	mlx_loop(MLX);
 }
 
