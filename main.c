@@ -3,86 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/11/30 21:24:13 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/11/30 15:58:17 by reasaw            #+#    #+#             */
+/*   Updated: 2016/11/30 21:03:58 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-/*
-** Function for storing coordinates for printing
-**
- map		*map_parser(char *line)
+void white_line(map *cds, int dir)
 {
-	map		*cds;
-	int		i;
-
-	i = 0;
-	cds = (map*)malloc(sizeof(map));
-	while (line[i])
-	{
-		if (line[i])
-	}
-	return (cds)
-} */
-
-void	white_line(map	*cds)
-{
-	int	c;
+	int c;
 
 	c = 0;
-	while (c < 50)
+	if (dir == 0)
 	{
-		mlx_pixel_put(MLX, WIN, X + c, Y, 0x88FFFFFF);
-		c++;
+		while (c < 10)
+		{
+			mlx_pixel_put(MLX, WIN, X + c, Y, 0x88FFFFFF);
+			c++;
+		}
 	}
-	c = 0;
-	while (c < 50)
+	else
 	{
-		mlx_pixel_put(MLX, WIN, X, Y + c, 0x88FFFFFF);
-		c++;
+		while (c < 10)
+		{
+			mlx_pixel_put(MLX, WIN, X, Y + c, 0x88FFFFFF);
+			c++;
+		}
 	}
 }
 
-void	green_line(map	*cds)
+void green_line(map *cds, int dir)
 {
-	int	c;
+	int c;
 
 	c = 0;
-	while (c < 50)
+	if (dir == 0)
 	{
-		mlx_pixel_put(MLX, WIN, X + c, Y, 0x0000FF00);
-		c++;
+		while (c < 10)
+		{
+			mlx_pixel_put(MLX, WIN, X + c, Y, 0x8800FF00);
+			c++;
+		}
 	}
-	c = 0;
-	while (c < 50)
+	else
 	{
-		mlx_pixel_put(MLX, WIN, X, Y + c, 0x0000FF00);
-		c++;
+		while (c < 10)
+		{
+			mlx_pixel_put(MLX, WIN, X, Y + c, 0x8800FF00);
+			c++;
+		}
 	}
 }
 
-void	closer(map *cds)
-{
-	int x2;
-	int y2;
-
-	x2 = 50;
-	while (x2 < X)
-	{
-		mlx_pixel_put(MLX, WIN, x2, Y, 0x88FFFFFF);
-		x2++;
-	}
-	y2 = 50;
-	while (y2 < Y)
-	{
-		mlx_pixel_put(MLX, WIN, X, y2, 0x88FFFFFF);
-		y2++;
-	}
-}
 
 void	window_handler(char	*file)
 {
@@ -90,48 +65,59 @@ void	window_handler(char	*file)
 	int		i;
 	int		fd;
 	char	*line;
-	int		max;
+	int 	max;
 
 	fd = open(file, O_RDONLY);
 	i = 0;
 	cds = (map*)malloc(sizeof(map));
-	X = 50;
-	Y = 50;
+	X = 100;
+	Y = 100;
+	max = 0;
 	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, 1300, 1300, "FUCKING SHIT");
+	WIN = mlx_new_window(MLX, 800, 800, "FUCKING SHIT");
 	get_next_line(fd, &line);
 	while (line[i])
 	{
 		if (line[i] == ' ')
+		{
 			i++;
+		}
 		if (line[i] == '0')
 		{
 			if (line[i - 1] != '1')
 			{
-				white_line(cds);
-				X += 50;
+				white_line(cds, 0);
+				white_line(cds, 1);
+				X += 10;
 			}
 			i++;
 		}
 		if (line[i] == '1')
 		{
-			green_line(cds);
-			mlx_pixel_put(MLX, WIN, X, Y, 0x0000FF00);
+			green_line(cds, 0);
+			green_line(cds, 1);
+			mlx_pixel_put(MLX, WIN, X, Y, 0x0055FF55);
 			i++;
-			X += 50;
+			X += 10;
 		
 		}
 		if (line[i] != '1' && line[i] != '0' && line[i] != ' ')
 		{
-			Y += 50;
+			white_line(cds, 1);
 			max = X;
-			X = 50;
+			Y += 10;
+			X = 100;
+			white_line(cds, 0);
 			get_next_line(fd, &line);
+			white_line(cds, 0);
 			i = 0;
 		}
 	}
-	X = max;
-	closer(cds);
+	while(X < max)
+	{
+		mlx_pixel_put(MLX, WIN, X++, Y, 0x88FFFFFF);
+	}
+
 	mlx_loop(MLX);
 }
 

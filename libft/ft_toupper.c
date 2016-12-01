@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/26 22:00:21 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/09/26 22:03:51 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/09/21 15:17:02 by reasaw            #+#    #+#             */
+/*   Updated: 2016/09/21 15:18:59 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
 int	ft_toupper(int c)
 {
-	if (c >= 97 && c <= 122)
-		return (c - 32);
+	if (c >= 'a' && c <= 'z')
+		c -= 32;
 	return (c);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/26 12:26:48 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/09/26 12:26:49 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/09/26 12:26:48 by reasaw            #+#    #+#             */
+/*   Updated: 2016/09/26 12:26:49 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,10 @@
 
 char	*ft_strnew(size_t size)
 {
-	return ((char *)ft_memalloc(size + 1));
+	char	*a;
+
+	a = (char *)ft_memalloc(size + 1);
+	if (a == NULL)
+		return (0);
+	return (a);
 }

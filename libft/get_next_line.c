@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw   <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/11 14:07:47 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/11/19 19:30:23 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/11/11 14:07:47 by reasaw            #+#    #+#             */
+/*   Updated: 2016/11/19 19:30:23 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "libft.h"
 
 size_t	end_of_line(char *str)
 {
@@ -27,10 +28,6 @@ size_t	end_of_line(char *str)
 	return (0);
 }
 
-/*
-** read_fd simply reads BUFF_SIZE bytes from the file and stores
-** it into buff which is joined onto our struct to form the next line.
-*/
 
 int		read_fd(int fd, char *buff)
 {
@@ -41,19 +38,6 @@ int		read_fd(int fd, char *buff)
 	return (r);
 }
 
-/*
-** If our static struct is already instanced and exists we cycle through
-** nodes of our struct looking to see if we have already stored our
-** particular file in a node.
-** If we haven't then we create a new node and allocate for it.
-** Since we haven't hit a return
-** (They happen when we find our file in a node)
-** we'll reach the bottom of the function where we assign values to the node
-** and allocate for our string. We set sort to the address of the first node
-** so when we are
-** done we can set it to sort. So next time we call it. We'll be able to
-** traverse the whole list.
-*/
 
 t_fd	*get_fd(t_fd *lst_fd, int fd)
 {
@@ -83,14 +67,6 @@ t_fd	*get_fd(t_fd *lst_fd, int fd)
 	return (l_tmp);
 }
 
-/*
-** We store the whole of our "got" next line in one node which
-** is appropiate to the file. We do this with join_del in a while loop
-** the loop breaks when there's nothing left to read or the end of line
-** is detected with end_of_line. s1 is what is already stored in the node
-** and s2 is the buffer which just read BUFF_SIZE bytes from the file.
-*/
-
 char	*join_del(char *s1, char *s2, int n)
 {
 	char	*tmp;
@@ -102,19 +78,6 @@ char	*join_del(char *s1, char *s2, int n)
 		ft_memdel((void **)&s2);
 	return (tmp);
 }
-
-/*
-** tmp_fd is our static struct used to track our progress for multiple
-** file descriptors We pass it to get_fd to find the appropiate node in
-** the list that contains the fd passed.
-** If it doesn't exist it is made.
-** After looping through the file, reading it, and joining those strings
-** from the buffer, we set the newline character to '\0' and modify the
-** string passed to equal the "got" line we then set the string in our
-** struct to be indexed past the line we just "got" by being 1 byte
-** past the newline. Otherwise we set it to nothing.
-** We free what our t_line used to be.
-*/
 
 int		get_next_line(int const fd, char **line)
 {

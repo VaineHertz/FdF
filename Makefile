@@ -1,15 +1,27 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: reasaw <marvin@42.fr>                      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2016/11/30 12:28:05 by reasaw            #+#    #+#              #
+#    Updated: 2016/11/30 12:29:15 by reasaw           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = fdf
 SRC = main.c
 OBJ = $(SRC:.c=.o)
 MLX = minilibx_macos/libmlx.a
 LIBFT = libft/libft.a
-FRAMEWORKS = -framework OpenGL -framework AppKit
+FRAMEWORK = -framework OpenGL -framework AppKit
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C minilibx_macos/
 	make -C libft/
-	gcc -o $(NAME) $(OBJ) $(MLX) $(LIBFT) $(FRAMEWORKS)
+	gcc -o $(NAME) $(OBJ) $(MLX) $(LIBFT) $(FRAMEWORK)
 
 clean:
 	rm -f $(OBJ)
@@ -20,8 +32,8 @@ fclean: clean
 	make -C libft/ fclean
 	make -C minilibx_macos/ clean
 
-cc: $(OBJ)
-	gcc -o $(NAME) $(OBJ) $(MLX) $(LIBFT) $(FRAMEWORKS)
+run: $(OBJ)
+	gcc -o $(NAME) $(OBJ) $(MLX) $(LIBFT) $(FRAMEWORK)
 	rm -f $(OBJ)
 
 re: clean all

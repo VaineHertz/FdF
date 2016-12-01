@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/10/01 20:33:48 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/10/01 22:52:38 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/09/28 13:51:11 by reasaw            #+#    #+#             */
+/*   Updated: 2016/09/28 13:51:12 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,12 @@
 
 t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
 {
-	t_list	*result;
-	t_list	*tmpresult;
-	t_list	*tmplst;
+	t_list	*new_list;
 
-	if (!lst || !f)
+	new_list = (t_list *)malloc(sizeof(t_list));
+	if (new_list == NULL || lst == NULL)
 		return (NULL);
-	tmplst = f(lst);
-	if ((result = ft_lstnew(tmplst->content, tmplst->content_size)))
-	{
-		tmpresult = result;
-		lst = lst->next;
-		while (lst)
-		{
-			tmplst = (*f)(lst);
-			if (!(tmpresult->next = ft_lstnew(tmplst->content,
-							tmplst->content_size)))
-				return (NULL);
-			tmpresult = tmpresult->next;
-			lst = lst->next;
-		}
-	}
-	return (result);
+	new_list = (*f)(lst);
+	new_list->next = ft_lstmap(lst->next, f);
+	return (new_list);
 }

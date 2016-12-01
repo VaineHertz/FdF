@@ -1,36 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strstr.c                                        :+:      :+:    :+:   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/26 16:23:05 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/10/01 23:43:33 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/09/23 11:51:43 by reasaw            #+#    #+#             */
+/*   Updated: 2016/09/23 13:00:45 by reasaw           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnstr(const char *big, const char *little, size_t len)
+char	*ft_strnstr(char *str, char *to_find, unsigned int n)
 {
-	size_t	i;
-	int		j;
+	unsigned int	i;
+	unsigned int	pos;
+	unsigned int	len;
 
 	i = 0;
-	j = 0;
-	if (!little[0])
-		return ((char *)big);
-	if (ft_strlen(little) > ft_strlen(big))
-		return (NULL);
-	while (big[i])
+	pos = 0;
+	len = 0;
+	while (to_find[len])
+		len++;
+	if (len == 0)
+		return (str);
+	while (str[i])
 	{
-		while (little[j] && big[i + j] == little[j] && i + j < len)
-			j++;
-		if (!little[j])
-			return ((char *)big + i);
+		while (to_find[pos] == str[i + pos] && (i + pos) < n)
+		{
+			if (pos == len - 1)
+				return (str + i);
+			pos++;
+		}
+		pos = 0;
 		i++;
-		j = 0;
 	}
 	return (0);
 }
