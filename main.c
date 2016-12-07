@@ -12,8 +12,8 @@
 
 #include "fdf.h"
 #define RED 2
-#define YELLOW 1
-#define WHITE 0
+#define BLUE 1
+#define GREEN 0
 #define W_SIZE 600
 
 void	draw_line(map *cds, int color)
@@ -24,6 +24,10 @@ void	draw_line(map *cds, int color)
 	c = 0;
 	if (color == RED)
 		hex = 0x00FF0000;
+	else if (color == BLUE)
+		hex = 0x000000FF;
+	else if (color == GREEN)
+		hex = 0x0000FF00;
 	while (c < ZOOM / 2 + 1)
 	{
 		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
@@ -126,7 +130,9 @@ void	render_image(map *cds)
 		{
 			currentvalue = ft_atoi(nbrline[i]);
 			if (currentvalue > 0)
-				draw_line(cds, RED);
+				draw_line(cds, GREEN);
+			else
+				draw_line(cds, BLUE);
 			X += ZOOM;
 			i++;
 		}
