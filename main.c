@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/04 19:04:20 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/08 15:51:34 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	draw_line(map *cds, int color)
 	}
 }
 
-int		*get_xy(map *cds)
+int		*get_xy(char *file)
 {
 	int 	*xy;
 	int		fd;
@@ -52,7 +52,7 @@ int		*get_xy(map *cds)
 	i = 0;
 	max = 0;
 	ft_putendl("TEST");
-	fd = open(cds->file, O_RDONLY);
+	fd = open(file, O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
 		ft_putendl("TEST");
@@ -242,10 +242,11 @@ void	window_handler(char	*file)
 {
 	int *xy;
 	map		*cds;
-	xy = get_xy(cds);
+
+	xy = get_xy(file);
 	ft_putnbr(xy[0]);
 	ft_putnbr(xy[1]);
-	cds = init_window(30, 50, 50, file, file);
+	cds = init_window(30, xy[0], xy[1], file, file);
 	render_image(cds);
 	mlx_key_hook(WIN, key_event, cds);
 	//mlx_mouse_hook(WIN, key_event, cds);
