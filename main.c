@@ -30,13 +30,46 @@ void	draw_line(map *cds, int color)
 		hex = 0x0000FF00;
 	while (c <= ZOOM) // 2)
 	{
-		mlx_pixel_put(MLX, WIN, X - c, Y, hex);
-		mlx_pixel_put(MLX, WIN, X, Y - c, hex);
-		//mlx_pixel_put(MLX, WIN, X + c, Y, hex);
-		//mlx_pixel_put(MLX, WIN, X, Y + c, hex);
+		//mlx_pixel_put(MLX, WIN, X - c, Y, hex);
+		//mlx_pixel_put(MLX, WIN, X, Y - c, hex);
+		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
+		mlx_pixel_put(MLX, WIN, X, Y + c, hex);
 		c++;
 	}
 }
+
+int		*get_xy(map *cds)
+{
+	int 	*xy;
+	int		fd;
+	char	*line;
+	int		i;
+	int		max;
+
+	xy = (int *)malloc(sizeof(int) * 2);
+	xy[0] = 0;
+	xy[1] = 0;
+	i = 0;
+	max = 0;
+	ft_putendl("TEST");
+	fd = open(cds->file, O_RDONLY);
+	while (get_next_line(fd, &line))
+	{
+		ft_putendl("TEST");
+		ft_putendl(line);
+		while (line[i])
+		{
+			if (line[i] != ' ')
+				xy[0]++;
+			if (max < xy[0])
+				max = xy[0];
+			i++;
+		}
+		i = 0;
+		xy[1]++;
+	}
+	return (xy);
+}	
 /*
 void	closer(int max, map *cds)
 {
@@ -87,7 +120,7 @@ int		cd_counter(char *line)
 	return (c);
 }
 */
-map		*init_window(int startpoint, int windowsize, char *windowtitle, char *file)
+map		*init_window(int startpoint, int width, int length, char *windowtitle, char *file)
 {
 	map		*cds;
 
@@ -100,7 +133,7 @@ map		*init_window(int startpoint, int windowsize, char *windowtitle, char *file)
 	PAN_ACCEL = 20;
 	ZOOM = 20;
 	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, windowsize, windowsize, windowtitle);
+	WIN = mlx_new_window(MLX, width, length, windowtitle);
 	return (cds);
 }
 
@@ -112,6 +145,7 @@ void	render_image(map *cds)
 	char	**nbrline;
 	int		max;
 	int		currentvalue;
+	int		nextvalue;
 
 	mlx_clear_window(MLX, WIN);
 	X = ORIGIN_X;
@@ -119,28 +153,35 @@ void	render_image(map *cds)
 	max = 0;
 	fd = open(cds->file, O_RDONLY);
 	i = 0;
+	nextvalue = 0;
 	while (get_next_line(fd, &line))
 	{
 		nbrline = ft_strsplit(line, ' ');
+		ft_putendl(line);
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			if (X!= 300 && Y!= 300)
-			{
-				if (currentvalue > 0)
-					draw_line(cds, GREEN);
-				else
-					draw_line(cds, BLUE);
-			}
+			if (nbrline[i + 1])
+				nextvalue = ft_atoi(nbrline[i + 1]);	
+			if (currentvalue > 0 && nextvalue > 0)
+				draw_line(cds, GREEN);
+			else if (currentvalue == 0)	
+				draw_line(cds, BLUE);
 			X += ZOOM;
 			i++;
+			//x++;
+			//if (max < x)
+			//	max = x;
 		}
 		Y += ZOOM;
-		max = X;
 		X = ORIGIN_X;
 		i = 0;
+	//	y++;
 	}
-		X = max;
+	//ft_putnbr(max/y);
+	//ft_putchar('\n');
+	//ft_putnbr(y);
+	//	X = max;
 }
 
 void	key_message(int keycode, map *cds)
@@ -199,12 +240,15 @@ int		key_event(int keycode, map *cds)
 
 void	window_handler(char	*file)
 {
+	int *xy;
 	map		*cds;
-
-	cds = init_window(30, W_SIZE, "FdF", file);
+	xy = get_xy(cds);
+	ft_putnbr(xy[0]);
+	ft_putnbr(xy[1]);
+	cds = init_window(30, 50, 50, file, file);
 	render_image(cds);
 	mlx_key_hook(WIN, key_event, cds);
-	//0mlx_mouse_hook(WIN, key_event, cds);
+	//mlx_mouse_hook(WIN, key_event, cds);
 	mlx_loop(MLX);
 }
 
@@ -225,7 +269,7 @@ int		main(int argc, char **argv)
 		ft_putendl("usage: ./fdf source_map");
 		return (0);
 	}
-	intro_message("tester");
+	intro_message(argv[1]);
 	window_handler(argv[1]);
 	return (0);
 }

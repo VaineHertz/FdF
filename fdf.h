@@ -16,6 +16,7 @@
 #	include "libft/libft.h"
 #	include "minilibx_macos/mlx.h"
 #	include <fcntl.h>
+#	include <math.h>
 #	define X cds->x
 #	define Y cds->y
 #	define MLX cds->mlx
