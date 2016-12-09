@@ -28,10 +28,8 @@ void	draw_line(map *cds, int color)
 		hex = 0x000000FF;
 	else if (color == GREEN)
 		hex = 0x0000FF00;
-	while (c <= ZOOM) // 2)
+	while (c <= ZOOM)
 	{
-		//mlx_pixel_put(MLX, WIN, X - c, Y, hex);
-		//mlx_pixel_put(MLX, WIN, X, Y - c, hex);
 		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
 		mlx_pixel_put(MLX, WIN, X, Y + c, hex);
 		c++;
@@ -51,12 +49,9 @@ int		*get_xy(char *file)
 	xy[1] = 0;
 	i = 0;
 	max = 0;
-	ft_putendl("TEST");
 	fd = open(file, O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
-		ft_putendl("TEST");
-		ft_putendl(line);
 		while (line[i])
 		{
 			if (line[i] != ' ')
@@ -70,56 +65,7 @@ int		*get_xy(char *file)
 	}
 	return (xy);
 }	
-/*
-void	closer(int max, map *cds)
-{
-	int x;
-	int y;
-	int c;
 
-	c = 0;
-	x = ORIGIN_X;
-	y = ORIGIN_Y;
-	while (y < ORIGIN_Y + max)
-	{
-		x = ORIGIN_X;
-		while(x < ORIGIN_X + max)
-		{
-			while (c < ZOOM / 2)
-			{
-				if (x + c < ORIGIN_X + max)
-					mlx_pixel_put(MLX, WIN, x + c, y, 0x88FFFFFF);
-				if (y + c < ORIGIN_Y + max)
-					mlx_pixel_put(MLX, WIN, x, y + c, 0x88FFFFFF);
-				if (x - c > ORIGIN_X)
-					mlx_pixel_put(MLX, WIN, x - c, y, 0x88FFFFFF);
-				if (y - c > ORIGIN_Y)
-					mlx_pixel_put(MLX, WIN, x, y - c, 0x88FFFFFF);
-				c++;
-			}
-			c = 0;
-			x += ZOOM;
-		}
-		y += ZOOM;
-	}
-}
-*/
-/*
-int		cd_counter(char *line)
-{
-	int	i;
-	int c;
-
-	i = 0;
-	c = 0;
-	while (line[i])
-	{
-		i++;
-		c++;
-	}
-	return (c);
-}
-*/
 map		*init_window(int startpoint, int width, int length, char *windowtitle, char *file)
 {
 	map		*cds;
@@ -133,7 +79,12 @@ map		*init_window(int startpoint, int width, int length, char *windowtitle, char
 	PAN_ACCEL = 20;
 	ZOOM = 20;
 	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, width, length, windowtitle);
+	WIN = mlx_new_window(MLX, (width / length) * ZOOM + startpoint * 2,
+		(length * ZOOM) + startpoint * 2, windowtitle);
+	ft_putchar('\n');
+	ft_putnbr(length);
+	ft_putchar('\n');
+	ft_putnbr(width);
 	return (cds);
 }
 
@@ -169,20 +120,11 @@ void	render_image(map *cds)
 				draw_line(cds, BLUE);
 			X += ZOOM;
 			i++;
-			//x++;
-			//if (max < x)
-			//	max = x;
 		}
 		Y += ZOOM;
 		X = ORIGIN_X;
 		i = 0;
-	//	y++;
 	}
-	//ft_putnbr(max/y);
-	//ft_putchar('\n');
-	//ft_putnbr(y);
-	//	X = max;
-}
 
 void	key_message(int keycode, map *cds)
 {
