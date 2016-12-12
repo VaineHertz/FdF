@@ -15,6 +15,25 @@
 #define BLUE 1
 #define GREEN 0
 #define W_SIZE 600
+#include "stdio.h"
+
+int		total;
+int		**value;
+
+void print_array(int **print)
+{
+	int i;
+	int j;
+	for (i = 0; i < 5; i++)
+	{
+		for (j = 0; j < 5; j++)
+		{
+			printf("%d ",print[i][j]);
+			printf("\n");
+		}
+	}
+	printf("\n");
+}
 
 void	draw_line(map *cds, int color)
 {
@@ -28,10 +47,10 @@ void	draw_line(map *cds, int color)
 		hex = 0x000000FF;
 	else if (color == GREEN)
 		hex = 0x0000FF00;
-	while (c <= ZOOM)
+	while (c <= 2)
 	{
 		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
-		mlx_pixel_put(MLX, WIN, X, Y + c, hex);
+		mlx_pixel_put(MLX, WIN, X, Y + c, hex); 
 		c++;
 	}
 }
@@ -48,7 +67,6 @@ int		*get_xy(char *file)
 	xy[0] = 0;
 	xy[1] = 0;
 	i = 0;
-	max = 0;
 	fd = open(file, O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
@@ -56,8 +74,6 @@ int		*get_xy(char *file)
 		{
 			if (line[i] != ' ')
 				xy[0]++;
-			if (max < xy[0])
-				max = xy[0];
 			i++;
 		}
 		i = 0;
@@ -79,52 +95,68 @@ map		*init_window(int startpoint, int width, int length, char *windowtitle, char
 	PAN_ACCEL = 20;
 	ZOOM = 20;
 	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, (width / length) * ZOOM + startpoint * 2,
+	WIN = mlx_new_window(MLX, (width) * ZOOM + startpoint * 2,
 		(length * ZOOM) + startpoint * 2, windowtitle);
-	ft_putchar('\n');
-	ft_putnbr(length);
-	ft_putchar('\n');
-	ft_putnbr(width);
 	return (cds);
 }
 
 void	render_image(map *cds)
 {
 	int		i;
+	int		a;
+	int		b;
 	int		fd;
 	char	*line;
 	char	**nbrline;
 	int		max;
 	int		currentvalue;
-	int		nextvalue;
-
+	int		*random[total];
 	mlx_clear_window(MLX, WIN);
 	X = ORIGIN_X;
 	Y = ORIGIN_Y;
 	max = 0;
 	fd = open(cds->file, O_RDONLY);
 	i = 0;
-	nextvalue = 0;
+	a = 0;
+	b = 0;
+
+	while(i < total)
+	{
+		random[i] = (int *)malloc(3 * sizeof(int));
+		i++;
+	}
+	i = 0;
 	while (get_next_line(fd, &line))
 	{
 		nbrline = ft_strsplit(line, ' ');
-		ft_putendl(line);
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			if (nbrline[i + 1])
-				nextvalue = ft_atoi(nbrline[i + 1]);	
-			if (currentvalue > 0 && nextvalue > 0)
+			ft_putnbr(X);
+			random[0][0] = X;
+			b++;
+			random[a][b] = Y;
+			b++;
+			random[a][b] = currentvalue;
+			b = 0;
+			if (currentvalue > 0)
 				draw_line(cds, GREEN);
-			else if (currentvalue == 0)	
+			else if (currentvalue == 0)
 				draw_line(cds, BLUE);
 			X += ZOOM;
 			i++;
+			a++;
 		}
 		Y += ZOOM;
 		X = ORIGIN_X;
 		i = 0;
 	}
+	VALUE = random;
+	//print_array(VALUE);
+	printf("%d\n", random[0][0]);
+	printf("%d\n", random[0][1]);
+	printf("%d\n", random[0][2]);
+}
 
 void	key_message(int keycode, map *cds)
 {
@@ -186,9 +218,9 @@ void	window_handler(char	*file)
 	map		*cds;
 
 	xy = get_xy(file);
-	ft_putnbr(xy[0]);
-	ft_putnbr(xy[1]);
-	cds = init_window(30, xy[0], xy[1], file, file);
+	total = xy[0];
+	VALUE[total][3];
+	cds = init_window(30, xy[0] / xy[1], xy[1], file, file);
 	render_image(cds);
 	mlx_key_hook(WIN, key_event, cds);
 	//mlx_mouse_hook(WIN, key_event, cds);

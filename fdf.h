@@ -17,26 +17,28 @@
 #	include "minilibx_macos/mlx.h"
 #	include <fcntl.h>
 #	include <math.h>
-#	define X cds->x
-#	define Y cds->y
+#	define X cds->xwithz
+#	define Y cds->ywithz
 #	define MLX cds->mlx
 #	define WIN cds->window
 #	define ZOOM cds->zoom
 #	define ORIGIN_X cds->origin_x
 #	define ORIGIN_Y cds->origin_y
 #	define PAN_ACCEL cds->pan_accelaration
+#	define VALUE cds->data
 
 typedef struct	twodee_map
 {
 	char	*file;
-	int		x;
-	int 	y;
+	int		xwithz;
+	int		ywithz;
 	int		origin_x;
 	int		origin_y;
 	int		zoom;
 	int		pan_accelaration;
 	void	*mlx;
 	void	*window;
+	int		**data;
 }			map;
 
 #endif
