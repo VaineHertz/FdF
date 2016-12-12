@@ -132,8 +132,8 @@ void	render_image(map *cds)
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			ft_putnbr(X);
-			random[0][0] = X;
+			//ft_putnbr(X);
+			random[a][b] = X;
 			b++;
 			random[a][b] = Y;
 			b++;
@@ -153,9 +153,9 @@ void	render_image(map *cds)
 	}
 	VALUE = random;
 	//print_array(VALUE);
-	printf("%d\n", random[0][0]);
-	printf("%d\n", random[0][1]);
-	printf("%d\n", random[0][2]);
+	printf("a:%d\n", random[1][0]);
+	printf("b:%d\n", random[1][1]);
+	printf("c:%d\n", random[1][2]);
 }
 
 void	key_message(int keycode, map *cds)
