@@ -28,8 +28,7 @@ void print_array(int **print)
 	{
 		for (j = 0; j < 5; j++)
 		{
-			printf("%d ",print[i][j]);
-			printf("\n");
+			printf("a:%d\n",print[i][j]);
 		}
 	}
 	printf("\n");
@@ -55,9 +54,44 @@ void	draw_line(map *cds, int color)
 	}
 }
 
+void	bresenham_line(int x0, int y0, int x1, int y1, map *cds)
+{
+	int		dx;
+	int		dy;
+	int		err;
+	int		sx;
+	int		sy;
+	int		e2;
+
+	dx = abs(x1 - x0);
+	dy = abs(y1 - y0);
+	sx = x0 < x1 ? 1 : -1;
+	sy = y0 < y1 ? 1 : -1;
+	err = (dx > dy ? dx : -dy)/2;
+
+	while (1)
+	{
+		mlx_pixel_put(MLX, WIN, x0, y0, 0x0000FF00);
+		if (x0 == x1 && y0 ==y1)
+			break;
+		e2 = err;
+		if (e2 > -dx)
+		{
+			err -= dy;
+			x0 += sx;
+		}
+		if (e2 < dy)
+		{
+			err += dx;
+			y0 += sy;
+		}
+	}
+
+}
+
 int		*get_xy(char *file)
 {
-	int 	*xy;
+	int		*xy;
 	int		fd;
 	char	*line;
 	int		i;
@@ -132,7 +166,6 @@ void	render_image(map *cds)
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			//ft_putnbr(X);
 			random[a][b] = X;
 			b++;
 			random[a][b] = Y;
@@ -153,9 +186,9 @@ void	render_image(map *cds)
 	}
 	VALUE = random;
 	//print_array(VALUE);
-	printf("a:%d\n", random[1][0]);
-	printf("b:%d\n", random[1][1]);
-	printf("c:%d\n", random[1][2]);
+	printf("x:%d\n", VALUE[6][0]);
+	printf("y:%d\n", VALUE[6][1]);
+	printf("z:%d\n", VALUE[6][2]);
 }
 
 void	key_message(int keycode, map *cds)
