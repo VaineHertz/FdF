@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = fdf
-SRC = main.c
+SRC = othermain.c
 OBJ = $(SRC:.c=.o)
 MLX = minilibx_macos/libmlx.a
 LIBFT = libft/libft.a
