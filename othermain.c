@@ -38,10 +38,9 @@ int		*get_xy(char *file)
 	while (get_next_line(fd, &line))
 	{
 		nbrline = ft_strsplit(line, ' ');
-		while (line[i])
+		while (nbrline[i])
 		{
-			if (line[i] != ' ')
-				xy[0]++;
+			xy[0]++;
 			i++;
 		}
 		i = 0;
