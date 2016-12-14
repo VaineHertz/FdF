@@ -89,9 +89,9 @@ void	bresenham_line(int x0, int y0, int x1, int y1, map *cds)
 
 }
 
-void	convert_z(map *cds)
+void	convert_z()
 {
-
+	
 }
 
 int		*get_xy(char *file)

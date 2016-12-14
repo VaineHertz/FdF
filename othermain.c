@@ -28,6 +28,7 @@ int		*get_xy(char *file)
 	char	*line;
 	int		i;
 	int		max;
+	char	**nbrline;
 
 	xy = (int *)malloc(sizeof(int) * 2);
 	xy[0] = 0;
@@ -36,6 +37,7 @@ int		*get_xy(char *file)
 	fd = open(file, O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
+		nbrline = ft_strsplit(line, ' ');
 		while (line[i])
 		{
 			if (line[i] != ' ')
@@ -45,6 +47,9 @@ int		*get_xy(char *file)
 		i = 0;
 		xy[1]++;
 	}
+	ft_putnbr(xy[0]);
+	ft_putchar('\n');
+	ft_putnbr(xy[1]);
 	return (xy);
 }
 
@@ -99,26 +104,30 @@ void	draw_everything(int **data, map *cds)
 	int c;
 
 	a = 0;
-	c = 0;
+	c = 1;
 	width = total / xyvalue[1];
+	//ft_putnbr(total);
+	ft_putchar('\n');
+	ft_putnbr(width);
+	//line(data[1][0], data[1][1], data[width][0], data[width][1], cds, GREEN);
 	while(data[a])
 	{
-		if (data[a + 1]) //this if statement handles drawing to the right
+		if (data[a + 1] && (a != c * (width - 1))) //this if statement handles drawing to the right 
 		{
 			if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
 				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
 			else
 				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
 		}
-		if (data[a + width]) //this if statement checks one under
+		if (data[a + width - 1]) //this if statement checks one under
 		{
 			if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
-				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, RED);
+				line(data[a][0], data[a][1], data[a + width - 1][0], data[a + width - 1][1], cds, RED);
 			else
-				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, BLUE);
+				line(data[a][0], data[a][1], data[a + width - 1][0], data[a + width - 1][1], cds, BLUE);
 		}
 		a++;
-		if ()
+		c++;
 	}
 }
 	
@@ -258,7 +267,7 @@ void	window_handler(char	*file)
 
 	xyvalue = get_xy(file);
 	total = xyvalue[0];
-	VALUE[total][3];
+	//ft_putnbr(total);
 	cds = init_window(30, xyvalue[0] / xyvalue[1], xyvalue[1], file, file);
 	render_image(cds);
 	mlx_key_hook(WIN, key_event, cds);
