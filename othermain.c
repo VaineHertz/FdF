@@ -111,22 +111,26 @@ void	draw_everything(int **data, map *cds)
 	//line(data[1][0], data[1][1], data[width][0], data[width][1], cds, GREEN);
 	while(data[a])
 	{
-		if (data[a + 1] && (a != c * (width - 1))) //this if statement handles drawing to the right 
+		if (a != total)
 		{
-			if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
-				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
-			else
-				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
-		}
-		if (data[a + width - 1]) //this if statement checks one under
-		{
-			if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
-				line(data[a][0], data[a][1], data[a + width - 1][0], data[a + width - 1][1], cds, RED);
-			else
-				line(data[a][0], data[a][1], data[a + width - 1][0], data[a + width - 1][1], cds, BLUE);
+			if (data[a + 1] && (a != (c * width) - 1)) //this if statement handles drawing to the right 
+			{
+				if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
+					line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
+				else
+					line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
+			}
+			if (a == c * width - 1)
+				c++;
+			if (data[a + width]) //this if statement checks one under
+			{
+				if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
+					line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, RED);
+				else
+					line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, BLUE);
+			}
 		}
 		a++;
-		c++;
 	}
 }
 	
