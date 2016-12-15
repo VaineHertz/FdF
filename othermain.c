@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/08 15:51:34 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/14 17:13:54 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,6 @@ int		*get_xy(char *file)
 		i = 0;
 		xy[1]++;
 	}
-	ft_putnbr(xy[0]);
-	ft_putchar('\n');
-	ft_putnbr(xy[1]);
 	return (xy);
 }
 
@@ -96,6 +93,21 @@ void	line(int x0, int y0, int x1, int y1, map *cds, int color) {
   }
 }
 
+void	ft_put2nbr(int **nbr, int total)
+{
+	int i;
+
+	i = 0;
+	while (i < total)
+	{
+		ft_putchar('\n');
+		ft_putnbr(nbr[i][0]);
+		ft_putnbr(nbr[i][1]);
+		ft_putnbr(nbr[i][2]);
+		i++;
+	}
+}
+
 void	draw_everything(int **data, map *cds)
 {
 	int a;
@@ -106,29 +118,24 @@ void	draw_everything(int **data, map *cds)
 	c = 1;
 	width = total / xyvalue[1];
 	//ft_putnbr(total);
-	ft_putchar('\n');
-	ft_putnbr(width);
 	//line(data[1][0], data[1][1], data[width][0], data[width][1], cds, GREEN);
-	while(data[a])
+	while(a < total)
 	{
-		if (a != total)
+		if (data[a + 1] && (a != (c * width) - 1)) //this if statement handles drawing to the right 
 		{
-			if (data[a + 1] && (a != (c * width) - 1)) //this if statement handles drawing to the right 
-			{
-				if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
-					line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
-				else
-					line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
-			}
-			if (a == c * width - 1)
-				c++;
-			if (data[a + width]) //this if statement checks one under
-			{
-				if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
-					line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, RED);
-				else
-					line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, BLUE);
-			}
+			if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
+				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
+			else
+				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
+		}
+		if (a == c * width - 1)
+			c++;
+		if (a + width < total) //this if statement checks one under
+		{
+			if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
+				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, RED);
+			else
+				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, BLUE);
 		}
 		a++;
 	}
@@ -177,6 +184,8 @@ void	render_image(map *cds)
 		random[i] = (int *)malloc(3 * sizeof(int));
 		i++;
 	}
+	random[total] = (int *)malloc(3 * sizeof(int));
+	random[total] = NULL;
 	i = 0;
 	while (get_next_line(fd, &line))
 	{
