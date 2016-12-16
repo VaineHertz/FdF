@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/* ************************************************************************* */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
@@ -6,20 +6,55 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/14 17:13:54 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/16 08:29:08 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-#define RED 2
-#define BLUE 1
-#define GREEN 0
-#define W_SIZE 600
-#include "stdio.h"
 
-int		total;
-int		**value;
-int		*xyvalue;
+int		*ortho_proj(int *og_xyz, map *cds)
+{
+	int *temp_xy;
+	int	temp_z;
+
+	temp_xy = (int *)malloc(sizeof(int) * 2);
+	temp_z = og_xyz[2];
+	temp_xy[0] = og_xyz[0];
+	temp_xy[1] = og_xyz[1];
+	temp_xy[0] = ZOOM / 16 * temp_xy[0] + 0;
+	temp_xy[1] = ZOOM / 16 * temp_z + 0;
+	return (temp_xy);
+}
+
+int		*rotate_map(int *og_xyz, map *cds)
+{
+	int *temp_xyz;
+
+	if (OPTION >= 0)
+		temp_xyz = (int *)malloc(sizeof(int) * 3);
+	if (OPTION == 0)
+	{
+		temp_xyz[0] = og_xyz[0] * cos(PHI[2]) - og_xyz[1] * sin(PHI[2]);
+		temp_xyz[1] = og_xyz[1] * cos(PHI[2]) + og_xyz[0] * sin(PHI[2]);
+		temp_xyz[2] = og_xyz[2];
+	}
+	else if (OPTION == 1)
+	{
+		temp_xyz[0] = og_xyz[0];
+		temp_xyz[1] = og_xyz[1] * cos(PHI[0]) - og_xyz[2] * sin(PHI[0]);
+		temp_xyz[2] = og_xyz[2] * cos(PHI[0]) + og_xyz[1] * sin(PHI[0]);
+	}
+	else if (OPTION == 2)
+	{
+		temp_xyz[0] = og_xyz[0] * cos(PHI[1]) - og_xyz[2] * sin(PHI[1]);
+		temp_xyz[1] = og_xyz[1];
+		temp_xyz[2] = og_xyz[2] * cos(PHI[1]) + og_xyz[0] * sin(PHI[1]);
+	}
+	if (OPTION >= 0)
+		return (temp_xyz);
+	else
+		return (og_xyz);
+}
 
 int		*get_xy(char *file)
 {
@@ -27,7 +62,6 @@ int		*get_xy(char *file)
 	int		fd;
 	char	*line;
 	int		i;
-	int		max;
 	char	**nbrline;
 
 	xy = (int *)malloc(sizeof(int) * 2);
@@ -49,34 +83,14 @@ int		*get_xy(char *file)
 	return (xy);
 }
 
-void	draw_line(map *cds, int color)
-{
-	int		c;
-	int		hex;
-
-	c = 0;
-	if (color == RED)
-		hex = 0x00FF0000;
-	else if (color == BLUE)
-		hex = 0x000000FF;
-	else if (color == GREEN)
-		hex = 0x0000FF00;
-	while (c <= 2)
-	{
-		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
-		mlx_pixel_put(MLX, WIN, X, Y + c, hex); 
-		c++;
-	}
-}
-
 void	line(int x0, int y0, int x1, int y1, map *cds, int color) {
- 
+
 	int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
-	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
 	int err = (dx>dy ? dx : -dy)/2, e2;
 	int		c;
 	int		hex;
-	
+
 	c = 0;
 	if (color == RED)
 		hex = 0x00FF0000;
@@ -84,108 +98,108 @@ void	line(int x0, int y0, int x1, int y1, map *cds, int color) {
 		hex = 0x000000FF;
 	else if (color == GREEN)
 		hex = 0x0000FF00;
-  for(;;){
-    mlx_pixel_put(MLX, WIN, x0, y0, hex);
-    if (x0==x1 && y0==y1) break;
-    e2 = err;
-    if (e2 >-dx) { err -= dy; x0 += sx; }
-    if (e2 < dy) { err += dx; y0 += sy; }
-  }
-}
-
-void	ft_put2nbr(int **nbr, int total)
-{
-	int i;
-
-	i = 0;
-	while (i < total)
+ 	while(1)
 	{
-		ft_putchar('\n');
-		ft_putnbr(nbr[i][0]);
-		ft_putnbr(nbr[i][1]);
-		ft_putnbr(nbr[i][2]);
-		i++;
+		mlx_pixel_put(MLX, WIN, x0, y0, hex);
+		if (x0==x1 && y0==y1)
+			break;
+    	e2 = err;
+		if (e2 >-dx)
+		{ 
+			err -= dy; 
+			x0 += sx;
+		}
+	    if (e2 < dy)
+		{
+			err += dx;
+			y0 += sy;
+		}
 	}
 }
 
-void	draw_everything(int **data, map *cds)
+void	draw_everything(map *cds, int color)
 {
-	int a;
 	int width;
 	int c;
+	int	a;
+	int	*temp_xy;
+	int	*temp_xy_right;
+	int	*temp_xy_under;
 
 	a = 0;
 	c = 1;
-	width = total / xyvalue[1];
-	//ft_putnbr(total);
-	//line(data[1][0], data[1][1], data[width][0], data[width][1], cds, GREEN);
-	while(a < total)
+	width = TOTAL / XYVALUE[1];
+	while(a < TOTAL)
 	{
-		if (data[a + 1] && (a != (c * width) - 1)) //this if statement handles drawing to the right 
+		temp_xy = ortho_proj(rotate_map(VALUE[a], cds), cds);
+		if (VALUE[a + 1] && (a != (c * width) - 1)) //this if statement handles drawing to the right
 		{
-			if (data[a][2] > 0 && data[a + 1][2] > 0) //colors red if both points are greater than 0
-				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, RED);
+			temp_xy_right = ortho_proj(rotate_map(VALUE[a + 1], cds), cds);
+			if (VALUE[a][3] > 0 && VALUE[a + 1][3] > 0) //colors red if both points are greater than 0
+				line(temp_xy[0] + 450, temp_xy[1] + 450, temp_xy_right[0] + 450, temp_xy_right[1] + 450, cds, RED);
 			else
-				line(data[a][0], data[a][1], data[a + 1][0], data[a + 1][1], cds, BLUE);
+				line(temp_xy[0] + 450, temp_xy[1] + 450, temp_xy_right[0] + 450, temp_xy_right[1] + 450, cds, BLUE);
 		}
 		if (a == c * width - 1)
 			c++;
-		if (a + width < total) //this if statement checks one under
+		if (a + width < TOTAL) //this if statement checks one under
 		{
-			if (data[a][2] > 0 && data[a + width][2] > 0) // colors red if both points are greater than 0
-				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, RED);
+			temp_xy_under = ortho_proj(rotate_map(VALUE[a + width], cds), cds);
+			if (VALUE[a][3] > 0 && VALUE[a + width][3] > 0) // colors red if both points are greater than 0
+				line(temp_xy[0] + 450, temp_xy[1] + 450, temp_xy_under[0] + 450, temp_xy_under[1] + 450, cds, RED);
 			else
-				line(data[a][0], data[a][1], data[a + width][0], data[a + width][1], cds, BLUE);
+				line(temp_xy[0] + 450, temp_xy[1] + 450, temp_xy_under[0] + 450, temp_xy_under[1] + 450, cds, BLUE);
 		}
 		a++;
 	}
 }
-	
+
 map		*init_window(int startpoint, int width, int length, char *windowtitle, char *file)
 {
 	map		*cds;
 
 	cds = (map*)malloc(sizeof(map));
 	cds->file = file;
-	X = startpoint;
-	Y = startpoint;
-	ORIGIN_X = startpoint;
-	ORIGIN_Y = startpoint;
+	X = 0;
+	Y = 0;
+	ORIGIN_X = 0;
+	ORIGIN_Y = 0;
 	PAN_ACCEL = 20;
 	ZOOM = 20;
+	TOTAL = 0;
+	PHI[0] = 0.1;
+	PHI[1] = 0.1;
+	PHI[2] = 0.1;
 	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, (width) * ZOOM + startpoint * 2,
-		(length * ZOOM) + startpoint * 2, windowtitle);
+//	WIN = mlx_new_window(MLX, (width) * ZOOM + startpoint * 2,
+//		(length * ZOOM) + startpoint * 2, windowtitle);
+	WIN = mlx_new_window(MLX, width, length, windowtitle);
 	return (cds);
 }
 
 void	render_image(map *cds)
 {
+	mlx_clear_window(MLX, WIN);
+	draw_everything(cds, RED);
+}
+
+void	get_cds(map *cds)
+{
 	int		i;
 	int		a;
-	int		b;
 	int		fd;
 	char	*line;
 	char	**nbrline;
-	int		max;
 	int		currentvalue;
-	int		*random[total];
-	mlx_clear_window(MLX, WIN);
+
 	X = ORIGIN_X;
 	Y = ORIGIN_Y;
-	max = 0;
 	fd = open(cds->file, O_RDONLY);
-	i = 0;
+	i = -1;
 	a = 0;
-	b = 0;
-
-	while(i < total)
-	{
-		random[i] = (int *)malloc(3 * sizeof(int));
-		i++;
-	}
-	random[total] = (int *)malloc(3 * sizeof(int));
-	random[total] = NULL;
+	VALUE = (int **)malloc(sizeof(int *) * TOTAL);
+	while(++i < TOTAL)
+		VALUE[i] = (int *)malloc(4 * sizeof(int));
 	i = 0;
 	while (get_next_line(fd, &line))
 	{
@@ -193,98 +207,26 @@ void	render_image(map *cds)
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			random[a][b] = X;
-			b++;
-			random[a][b] = Y;
-			b++;
-			random[a][b] = currentvalue;
-			b = 0;
-			//if (currentvalue > 0)
-			//	draw_line(cds, GREEN);
-			//else if (currentvalue == 0)
-			//	draw_line(cds, BLUE);
-			X += ZOOM;
+			VALUE[a][0] = X - ((XYVALUE[0] / XYVALUE[1]) * 40);
+			VALUE[a][1] = Y - (XYVALUE[1] * 40);
+			VALUE[a][2] = currentvalue;
+			VALUE[a][3] = currentvalue;
+			X += 80;
 			i++;
 			a++;
 		}
-		Y += ZOOM;
+		Y += 80;
 		X = ORIGIN_X;
 		i = 0;
 	}
-	VALUE = random;
-	//print_array(VALUE);
-	draw_everything(random, cds);
-	//printf("a:%d\n", VALUE[0][0]);
-	//printf("b:%d\n", VALUE[0][1]);
-	//printf("c:%d\n", VALUE[0][2]);
 }
 
-void	key_message(int keycode, map *cds)
+void	window_handler(map *cds)
 {
-	if (keycode == 116 || keycode == 121)
-	{
-		if (PAN_ACCEL == 40)
-			ft_putendl("\nPan & Zoom acceleration is fast");
-		else if (PAN_ACCEL == 20)
-			ft_putendl("\nPan & Zoom acceleration is medium");
-		else if (PAN_ACCEL == 5)
-			ft_putendl("\nPan & Zoom acceleration is slow");
-	}
-}
-
-int		key_event(int keycode, map *cds)
-{
-	if (keycode == 121)
-	{
-		if (PAN_ACCEL == 20)
-			PAN_ACCEL = 5;
-		else if (PAN_ACCEL == 40)
-			PAN_ACCEL = 20;
-		else
-			keycode = -1;
-	}
-	else if (keycode == 116)
-	{
-		if (PAN_ACCEL == 5)
-			PAN_ACCEL = 20;
-		else if (PAN_ACCEL == 20)
-			PAN_ACCEL = 40;
-		else
-			keycode = -1;
-	}
-	else if (keycode == 69)
-		ZOOM += PAN_ACCEL / 2;
-	else if (keycode == 78 && ZOOM > 1)
-		ZOOM -= PAN_ACCEL / 2;
-	else if (keycode == 123)
-		ORIGIN_X -= PAN_ACCEL;
-	else if (keycode == 124 && ORIGIN_X + PAN_ACCEL < W_SIZE)
-		ORIGIN_X += PAN_ACCEL;
-	else if (keycode == 125 && ORIGIN_Y + PAN_ACCEL < W_SIZE)
-		ORIGIN_Y += PAN_ACCEL;
-	else if (keycode == 126)
-		ORIGIN_Y -= PAN_ACCEL;
-	else if (keycode == 53)
-		exit(0);
-	else if (keycode == 1)
-		ft_putendl("i did a thing");
-	key_message(keycode, cds);
-	render_image(cds);
-	return (0);
-}
-
-void	window_handler(char	*file)
-{
-	map		*cds;
-
-	xyvalue = get_xy(file);
-	total = xyvalue[0];
-	//ft_putnbr(total);
-	cds = init_window(30, xyvalue[0] / xyvalue[1], xyvalue[1], file, file);
-	render_image(cds);
-	mlx_key_hook(WIN, key_event, cds);
-	//mlx_mouse_hook(WIN, key_event, cds);
-	mlx_loop(MLX);
+	OPTION = -1;
+	render_image(cds); //renders the first frame
+	mlx_key_hook(WIN, key_event, cds); // watches for a keypress and renders a new frame.
+	mlx_loop(MLX); //loops.
 }
 
 void	intro_message(char *mapname)
@@ -299,12 +241,18 @@ void	intro_message(char *mapname)
 
 int		main(int argc, char **argv)
 {
+	map		*cds;
+
 	if (argc != 2)
 	{
 		ft_putendl("usage: ./fdf source_map");
 		return (0);
 	}
 	intro_message(argv[1]);
-	window_handler(argv[1]);
+	cds = init_window(0, 900, 900, argv[1], argv[1]); //initializes the window
+	XYVALUE = get_xy(argv[1]); //gets the width and length of the map
+	TOTAL = XYVALUE[0]; //sets total to the total amount of points
+	get_cds(cds);
+	window_handler(cds);
 	return (0);
 }

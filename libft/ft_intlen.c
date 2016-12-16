@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_intlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/24 14:24:42 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/09/25 14:40:18 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/09/30 18:25:23 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/09/30 19:01:56 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t		ft_strlen(const char *s)
+int	ft_intlen(int n)
 {
-	int	c;
+	int len;
 
-	c = 0;
-	while (s[c])
-		c++;
-	return (c);
+	if (n == -214783648)
+		return (11);
+	len = 0;
+	if (n == 0)
+		return (1);
+	if (n < 0)
+	{
+		n = -n;
+		len++;
+	}
+	while (n /= 10)
+		len++;
+	len++;
+	return (len);
 }

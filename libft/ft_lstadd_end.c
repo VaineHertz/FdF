@@ -1,23 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_lstadd_end.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/24 14:24:42 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/09/25 14:40:18 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/10/01 20:12:44 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/10/01 22:07:09 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t		ft_strlen(const char *s)
+void	ft_lstadd_end(t_list **alst, t_list *new)
 {
-	int	c;
+	t_list *temp;
 
-	c = 0;
-	while (s[c])
-		c++;
-	return (c);
+	if (!(temp = (t_list *)malloc(sizeof(t_list))))
+		return ;
+	new->next = NULL;
+	if (*alst == NULL)
+		*alst = new;
+	else
+	{
+		temp = *alst;
+		while (temp->next != NULL)
+			temp = temp->next;
+		temp->next = new;
+	}
 }

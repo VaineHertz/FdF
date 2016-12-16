@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_put2str.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/24 14:24:42 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/09/25 14:40:18 by tpadilla         ###   ########.fr       */
+/*   Created: 2016/11/08 21:48:00 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/11/11 15:22:18 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t		ft_strlen(const char *s)
+void	ft_put2str(char **str)
 {
-	int	c;
+	int	i;
 
-	c = 0;
-	while (s[c])
-		c++;
-	return (c);
+	i = 0;
+	while (str[i])
+	{
+		ft_putstr(str[i]);
+		i++;
+	}
 }

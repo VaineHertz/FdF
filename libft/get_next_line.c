@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: reasaw   <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/11 14:07:47 by reasaw            #+#    #+#             */
-/*   Updated: 2016/11/19 19:30:23 by reasaw           ###   ########.fr       */
+/*   Created: 2016/11/11 14:07:47 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/12/16 07:02:04 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include "libft.h"
 
 size_t	end_of_line(char *str)
 {
@@ -28,7 +27,6 @@ size_t	end_of_line(char *str)
 	return (0);
 }
 
-
 int		read_fd(int fd, char *buff)
 {
 	int		r;
@@ -37,7 +35,6 @@ int		read_fd(int fd, char *buff)
 		buff[r] = '\0';
 	return (r);
 }
-
 
 t_fd	*get_fd(t_fd *lst_fd, int fd)
 {

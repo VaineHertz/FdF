@@ -3,21 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/23 12:28:57 by reasaw            #+#    #+#             */
-/*   Updated: 2016/09/23 12:45:10 by reasaw           ###   ########.fr       */
+/*   Created: 2016/09/27 00:42:49 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/09/27 00:44:21 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*ft_strchr(const char *str, int c)
-{
-	int i;
+#include "libft.h"
 
-	i = 0;
-	while (str[i] && str[i] != c)
-		i++;
-	if (str[i] == c)
-		return ((char *)str + i);
-	return (0);
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s != (char)c && *s)
+		s++;
+	if (*s == (char)c)
+		return ((char *)s);
+	return (NULL);
 }

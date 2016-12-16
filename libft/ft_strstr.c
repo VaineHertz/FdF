@@ -3,35 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: reasaw <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/09/21 10:59:00 by reasaw            #+#    #+#             */
-/*   Updated: 2016/09/23 11:50:57 by reasaw           ###   ########.fr       */
+/*   Created: 2016/09/26 16:23:05 by tpadilla          #+#    #+#             */
+/*   Updated: 2016/09/26 21:41:31 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*ft_strstr(char *str, char *to_find)
+#include "libft.h"
+
+char	*ft_strstr(const char *big, const char *little)
 {
-	int i;
-	int pos;
-	int len;
+	int		i;
+	int		j;
+	char	*rs;
 
 	i = 0;
-	pos = 0;
-	len = 0;
-	while (to_find[len])
-		len++;
-	if (len == 0)
-		return (str);
-	while (str[i])
+	if (ft_strlen((char *)little) == 0 || big == little)
+		return ((char *)big);
+	while (big[i] != '\0')
 	{
-		while (to_find[pos] == str[i + pos])
+		j = 0;
+		while (little[j] == big[i + j])
 		{
-			if (pos == len - 1)
-				return (str + i);
-			pos++;
+			if (little[j + 1] == '\0')
+			{
+				rs = (char*)big + i;
+				return (rs);
+			}
+			j++;
 		}
-		pos = 0;
 		i++;
 	}
 	return (0);
