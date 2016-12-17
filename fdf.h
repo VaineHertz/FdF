@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 15:48:46 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/16 08:20:08 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/16 20:35:05 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #	include "minilibx_macos/mlx.h"
 #	include <fcntl.h>
 #	include <math.h>
-#	define X cds->xwithz
-#	define Y cds->ywithz
+#	define X cds->x
+#	define Y cds->y
 #	define MLX cds->mlx
 #	define WIN cds->window
 #	define ZOOM cds->zoom
@@ -33,25 +33,25 @@
 #	define RED 2
 #	define BLUE 1
 #	define GREEN 0
-#	define W_SIZE 600
+#	define ABS(a) ((a)<0?(-(a)):(a))
 #	include <stdio.h>
 #	include <math.h>
 
 typedef struct	twodee_map
 {
 	char	*file;
-	float	xwithz;
-	float	ywithz;
-	int		origin_x;
-	int		origin_y;
-	float	zoom;
+	double	x;
+	double	y;
+	double	origin_x;
+	double	origin_y;
+	double	zoom;
 	int		pan_accelaration;
 	void	*mlx;
 	void	*window;
-	int		**value;
+	double	**value;
 	int		total;
 	int		*xyvalue;
-	float	phi[3];
+	double	phi[3];
 	int		option;
 }			map;
 

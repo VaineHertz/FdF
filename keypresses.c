@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/15 21:16:59 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/16 08:20:48 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/16 21:07:47 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,32 +48,32 @@ int		key_event(int keycode, map *cds)
 	else if (keycode == 92)
 	{
 		OPTION = 0;
-		PHI[2] += 0.1;
+		PHI[2] = 0.1;
 	}
 	else if (keycode == 88)
 	{
 		OPTION = 0;
-		PHI[2] -= 0.1;
+		PHI[2] = -0.1;
 	}
 	else if (keycode == 89)
 	{
 		OPTION = 1;
-		PHI[0] += 0.1;
+		PHI[0] = 0.1;
 	}
 	else if (keycode == 86)
 	{
 		OPTION = 1;
-		PHI[0] -= 0.1;
+		PHI[0] = -0.1;
 	}
 	else if (keycode == 91)
 	{
 		OPTION = 2;
-		PHI[1] += 0.1;
+		PHI[1] = 0.1;
 	}
 	else if (keycode == 87)
 	{
 		OPTION = 2;
-		PHI[1] -= 0.1;
+		PHI[1] = -0.1;
 	}
 	else if (keycode == 69)
 		ZOOM += PAN_ACCEL / 2;
@@ -81,9 +81,9 @@ int		key_event(int keycode, map *cds)
 		ZOOM -= PAN_ACCEL / 2;
 	else if (keycode == 123)
 		ORIGIN_X -= PAN_ACCEL;
-	else if (keycode == 124 && ORIGIN_X + PAN_ACCEL < W_SIZE)
+	else if (keycode == 124)
 		ORIGIN_X += PAN_ACCEL;
-	else if (keycode == 125 && ORIGIN_Y + PAN_ACCEL < W_SIZE)
+	else if (keycode == 125)
 		ORIGIN_Y += PAN_ACCEL;
 	else if (keycode == 126)
 		ORIGIN_Y -= PAN_ACCEL;
