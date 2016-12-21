@@ -6,12 +6,12 @@
 #    By: reasaw <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/30 12:28:05 by reasaw            #+#    #+#              #
-#    Updated: 2016/12/15 21:28:17 by tpadilla         ###   ########.fr        #
+#    Updated: 2016/12/20 10:54:37 by tpadilla         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
-SRC = othermain.c keypresses.c
+SRC = main.c keypresses.c
 OBJ = $(SRC:.c=.o)
 MLX = minilibx_macos/libmlx.a
 LIBFT = libft/libft.a

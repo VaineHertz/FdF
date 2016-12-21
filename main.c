@@ -6,92 +6,161 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/08 15:51:34 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/20 16:27:51 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-#define RED 2
-#define BLUE 1
-#define GREEN 0
-#define W_SIZE 600
-#include "stdio.h"
 
-int		total;
-int		**value;
-
-void print_array(int **print)
+double	*ortho_proj(double *og_xyz, fdf *master)
 {
-	int i;
-	int j;
-	for (i = 0; i < 5; i++)
-	{
-		for (j = 0; j < 5; j++)
-		{
-			printf("a:%d\n",print[i][j]);
-		}
-	}
-	printf("\n");
+	double	*temp_xy;
+	double	temp_z;
+
+	temp_xy = (double *)malloc(sizeof(double) * 2);
+	temp_z = og_xyz[2];
+	temp_xy[0] = og_xyz[0];
+	temp_xy[1] = og_xyz[1];
+	temp_xy[0] = ZOOM / 64 * temp_xy[0];
+	temp_xy[1] = ZOOM / 64 * temp_z;
+	return (temp_xy);
 }
 
-void	draw_line(map *cds, int color)
+double	*rotate_map(double *og_xyz, fdf *master)
 {
-	int		c;
+	double	temp_xyz[3];
+
+	temp_xyz[0] = og_xyz[0];
+	temp_xyz[1] = og_xyz[1];
+	temp_xyz[2] = og_xyz[2];
+	if (OPTION == 0)
+	{
+		og_xyz[0] = temp_xyz[0] * cos(PHI) - temp_xyz[1] * sin(PHI);
+		og_xyz[1] = temp_xyz[1] * cos(PHI) + temp_xyz[0] * sin(PHI);
+	}
+	else if (OPTION == 1)
+	{
+		og_xyz[1] = temp_xyz[1] * cos(PHI) - temp_xyz[2] * sin(PHI);
+		og_xyz[2] = temp_xyz[2] * cos(PHI) + temp_xyz[1] * sin(PHI);
+	}
+	else if (OPTION == 2)
+	{
+		og_xyz[0] = temp_xyz[0] * cos(PHI) - temp_xyz[2] * sin(PHI);
+		og_xyz[2] = temp_xyz[2] * cos(PHI) + temp_xyz[0] * sin(PHI);
+	}
+	return (og_xyz);
+}
+
+void	print_cds(double *p, int option)
+{
+	if (option == 0)
+		ft_putendl("\nFirst point: ");
+	else
+		ft_putendl("\nSecond point: ");
+	ft_putstr("X: ");
+	ft_putnbr(p[0]);
+	ft_putstr("\nY: ");
+	ft_putnbr(p[1]);
+	if (option != 0)
+		ft_putchar('\n');
+}
+
+void	line(double *p1, double *p2, fdf *master, int color)
+{
+	double	dx = ABS(p2[0] - p1[0]);
+	double	dy = ABS(p2[1] - p1[1]);
+	double	err = (dx > dy ? dx : -dy) / 2;
+	double	e2;
+	double	temp_x;
+	double	temp_y;
 	int		hex;
 
-	c = 0;
-	if (color == RED)
-		hex = 0x00FF0000;
-	else if (color == BLUE)
-		hex = 0x000000FF;
-	else if (color == GREEN)
-		hex = 0x0000FF00;
-	while (c <= 2)
-	{
-		mlx_pixel_put(MLX, WIN, X + c, Y, hex);
-		mlx_pixel_put(MLX, WIN, X, Y + c, hex); 
-		c++;
-	}
-}
-
-void	bresenham_line(int x0, int y0, int x1, int y1, map *cds)
-{
-	int		dx;
-	int		dy;
-	int		err;
-	int		sx;
-	int		sy;
-	int		e2;
-
-	dx = abs(x1 - x0);
-	dy = abs(y1 - y0);
-	sx = x0 < x1 ? 1 : -1;
-	sy = y0 < y1 ? 1 : -1;
-	err = (dx > dy ? dx : -dy)/2;
-
+	temp_x = p1[0];
+	temp_y = p1[1];
 	while (1)
 	{
-		mlx_pixel_put(MLX, WIN, x0, y0, 0x0000FF00);
-		if (x0 == x1 && y0 ==y1)
-			break;
+		mlx_pixel_put(MLX, WIN, temp_x + TRANSLATE_X, temp_y + TRANSLATE_Y, color);
+		if ((int)temp_x == (int)p2[0] && (int)temp_y == (int)p2[1])
+			break ;
 		e2 = err;
 		if (e2 > -dx)
 		{
 			err -= dy;
-			x0 += sx;
+			if (temp_x < p2[0])
+				temp_x += 1;
+			else
+				temp_x -= 1;
 		}
 		if (e2 < dy)
 		{
 			err += dx;
-			y0 += sy;
+			if (temp_y < p2[1])
+				temp_y += 1;
+			else
+				temp_y -= 1;
 		}
 	}
-
 }
 
-void	convert_z()
+void	color_check(fdf *master, double *p1, double *p2, int a, int option)
 {
-	
+	int		width;
+	double	temp_p1[2];
+	double	temp_p2[2];
+
+	width = TOTAL / YVALUE;
+	if (option == 1)
+	{
+		if (VALUE[a][3] > 0 && VALUE[a + 1][3] > 0)
+			line(p1, p2, master, RED);
+		else
+			line(p1, p2, master, BLUE);
+	}
+	else if (option == 2)
+	{
+		if (VALUE[a][3] > 0 && VALUE[a + width][3] > 0)
+			line(p1, p2, master, RED);
+		else
+			line(p1, p2, master, BLUE);
+	}
+}
+
+void	render_image(fdf *master)
+{
+	int		width;
+	int		c;
+	int		a;
+	double	*temp_xy;
+	double	*temp_xy2;
+
+	a = 0;
+	c = 1;
+	width = TOTAL / YVALUE;
+	mlx_clear_window(MLX, WIN);
+	while (a < TOTAL)
+	{
+		rotate_map(VALUE[a], master);
+		a++;
+	}
+	PHI = 0;
+	a = 0;
+	while (a < TOTAL)
+	{
+		temp_xy = ortho_proj(VALUE[a], master);
+		if (VALUE[a + 1] && (a != (c * width) - 1))
+		{
+			temp_xy2 = ortho_proj(VALUE[a + 1], master);
+			color_check(master, temp_xy, temp_xy2, a, 1);
+		}
+		if (a == c * width - 1)
+			c++;
+		if (a + width < TOTAL)
+		{
+			temp_xy2 = ortho_proj(VALUE[a + width], master);
+			color_check(master, temp_xy, temp_xy2, a, 2);
+		}
+		a++;
+	}
 }
 
 int		*get_xy(char *file)
@@ -100,7 +169,7 @@ int		*get_xy(char *file)
 	int		fd;
 	char	*line;
 	int		i;
-	int		max;
+	char	**nbrline;
 
 	xy = (int *)malloc(sizeof(int) * 2);
 	xy[0] = 0;
@@ -109,61 +178,88 @@ int		*get_xy(char *file)
 	fd = open(file, O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
-		while (line[i])
+		nbrline = ft_strsplit(line, ' ');
+		while (nbrline[i])
 		{
-			if (line[i] != ' ')
-				xy[0]++;
+			xy[0]++;
 			i++;
 		}
 		i = 0;
 		xy[1]++;
 	}
 	return (xy);
-}	
+}
 
-map		*init_window(int startpoint, int width, int length, char *windowtitle, char *file)
+map		*init_map(char *file)
 {
 	map		*cds;
+	int		*xy;
 
 	cds = (map*)malloc(sizeof(map));
-	cds->file = file;
-	X = startpoint;
-	Y = startpoint;
-	ORIGIN_X = startpoint;
-	ORIGIN_Y = startpoint;
-	PAN_ACCEL = 20;
-	ZOOM = 20;
-	MLX = mlx_init();
-	WIN = mlx_new_window(MLX, (width) * ZOOM + startpoint * 2,
-		(length * ZOOM) + startpoint * 2, windowtitle);
+	xy = get_xy(file);
+	cds->yvalue = xy[1];
+	cds->total = xy[0];
+	cds->x = 0;
+	cds->y = 0;
+	cds->origin_x = (cds->total / cds->yvalue) / 2;
+	cds->origin_y = cds->yvalue / 2;
 	return (cds);
 }
 
-void	render_image(map *cds)
+mod		*init_mod(void)
+{
+	mod	*m_cds;
+
+	m_cds = (mod*)malloc(sizeof(mod));
+	m_cds->pan_accelaration = 20;
+	m_cds->zoom = 20;
+	m_cds->phi = 0;
+	m_cds->phi_mod = 0.1;
+	return (m_cds);
+}
+
+w_data	*init_window(map *cds, mod *m_cds, char *file)
+{
+	w_data	*mlx_w;
+
+	mlx_w = (w_data*)malloc(sizeof(w_data));
+	mlx_w->mlx = mlx_init();
+	mlx_w->window_width = (cds->total / cds->yvalue) * m_cds->zoom * 2.5 < 1000 ? ((cds->total / cds->yvalue) * m_cds->zoom * 2.5) : 1000;
+	mlx_w->window_length = (cds->yvalue * m_cds->zoom) * 2.5 < 1000 ? ((cds->yvalue * m_cds->zoom) * 2.5) : 1000;
+	mlx_w->window = mlx_new_window(mlx_w->mlx, mlx_w->window_width,
+			mlx_w->window_length, file);
+	mlx_w->file = file;
+	return (mlx_w);
+}
+
+fdf		*init_master(char *file)
+{
+	fdf		*master;
+
+	master = (fdf*)malloc(sizeof(fdf));
+	master->cds = init_map(file);
+	master->m_cds = init_mod();
+	master->mlx_w = init_window(master->cds, master->m_cds, file);
+	return (master);
+}
+
+void	get_cds(fdf *master)
 {
 	int		i;
 	int		a;
-	int		b;
 	int		fd;
 	char	*line;
 	char	**nbrline;
-	int		max;
 	int		currentvalue;
-	int		*random[total];
-	mlx_clear_window(MLX, WIN);
-	X = ORIGIN_X;
-	Y = ORIGIN_Y;
-	max = 0;
-	fd = open(cds->file, O_RDONLY);
-	i = 0;
-	a = 0;
-	b = 0;
 
-	while(i < total)
-	{
-		random[i] = (int *)malloc(3 * sizeof(int));
-		i++;
-	}
+	X = 0;
+	Y = 0;
+	fd = open(master->mlx_w->file, O_RDONLY);
+	i = -1;
+	a = 0;
+	VALUE = (double **)malloc(sizeof(double *) * TOTAL);
+	while (++i < TOTAL)
+		VALUE[i] = (double *)malloc(sizeof(double) * 4);
 	i = 0;
 	while (get_next_line(fd, &line))
 	{
@@ -171,97 +267,25 @@ void	render_image(map *cds)
 		while (nbrline[i])
 		{
 			currentvalue = ft_atoi(nbrline[i]);
-			random[a][b] = X;
-			b++;
-			random[a][b] = Y;
-			b++;
-			random[a][b] = currentvalue;
-			b = 0;
-			if (currentvalue > 0)
-				draw_line(cds, GREEN);
-			else if (currentvalue == 0)
-				draw_line(cds, BLUE);
-			X += ZOOM;
+			VALUE[a][0] = X - ((TOTAL / YVALUE) * 40);
+			VALUE[a][1] = Y - (YVALUE * 40);
+			VALUE[a][2] = currentvalue * 40;
+			VALUE[a][3] = currentvalue;
+			X += 80;
 			i++;
 			a++;
 		}
-		Y += ZOOM;
-		X = ORIGIN_X;
+		Y += 80;
+		X = 0;
 		i = 0;
 	}
-	VALUE = random;
-	//print_array(VALUE);
-	printf("x:%d\n", VALUE[6][0]);
-	printf("y:%d\n", VALUE[6][1]);
-	printf("z:%d\n", VALUE[6][2]);
 }
 
-void	key_message(int keycode, map *cds)
+void	window_handler(fdf *master)
 {
-	if (keycode == 116 || keycode == 121)
-	{
-		if (PAN_ACCEL == 40)
-			ft_putendl("\nPan & Zoom acceleration is fast");
-		else if (PAN_ACCEL == 20)
-			ft_putendl("\nPan & Zoom acceleration is medium");
-		else if (PAN_ACCEL == 5)
-			ft_putendl("\nPan & Zoom acceleration is slow");
-	}
-}
-
-int		key_event(int keycode, map *cds)
-{
-	if (keycode == 121)
-	{
-		if (PAN_ACCEL == 20)
-			PAN_ACCEL = 5;
-		else if (PAN_ACCEL == 40)
-			PAN_ACCEL = 20;
-		else
-			keycode = -1;
-	}
-	else if (keycode == 116)
-	{
-		if (PAN_ACCEL == 5)
-			PAN_ACCEL = 20;
-		else if (PAN_ACCEL == 20)
-			PAN_ACCEL = 40;
-		else
-			keycode = -1;
-	}
-	else if (keycode == 69)
-		ZOOM += PAN_ACCEL / 2;
-	else if (keycode == 78 && ZOOM > 1)
-		ZOOM -= PAN_ACCEL / 2;
-	else if (keycode == 123)
-		ORIGIN_X -= PAN_ACCEL;
-	else if (keycode == 124 && ORIGIN_X + PAN_ACCEL < W_SIZE)
-		ORIGIN_X += PAN_ACCEL;
-	else if (keycode == 125 && ORIGIN_Y + PAN_ACCEL < W_SIZE)
-		ORIGIN_Y += PAN_ACCEL;
-	else if (keycode == 126)
-		ORIGIN_Y -= PAN_ACCEL;
-	else if (keycode == 53)
-		exit(0);
-	else if (keycode == 1)
-		ft_putendl("i did a thing");
-	key_message(keycode, cds);
-	render_image(cds);
-	return (0);
-}
-
-void	window_handler(char	*file)
-{
-	int *xy;
-	map		*cds;
-
-	xy = get_xy(file);
-	total = xy[0];
-	VALUE[total][3];
-	cds = init_window(30, xy[0] / xy[1], xy[1], file, file);
-	render_image(cds);
-	mlx_key_hook(WIN, key_event, cds);
-	//mlx_mouse_hook(WIN, key_event, cds);
+	OPTION = -1;
+	render_image(master);
+	mlx_key_hook(WIN, key_event, master);
 	mlx_loop(MLX);
 }
 
@@ -269,20 +293,27 @@ void	intro_message(char *mapname)
 {
 	ft_putstr("\nMap name: ");
 	ft_putendl(mapname);
-	ft_putendl("\nDirectional keys to pan\n+ and - to Zoom\n");
-	ft_putendl("PG UP and PG down to set acceleration");
+	ft_putendl("\nDirectional keys to pan\n+ and - to Zoom");
+	ft_putendl("4-9 Numpad to rotate (keys paired for an axis vertically)\n");
+	ft_putendl("PG UP and PG down to set Pan & Zoom speed");
+	ft_putendl("Home and End to set Rotation Speed");
 	ft_putendl("\nPan & Zoom acceleration is medium");
+	ft_putendl("Rotate acceleration is slow");
 	ft_putendl("\nPress esc to quit");
 }
 
 int		main(int argc, char **argv)
 {
+	fdf		*master;
+
 	if (argc != 2)
 	{
 		ft_putendl("usage: ./fdf source_map");
 		return (0);
 	}
 	intro_message(argv[1]);
-	window_handler(argv[1]);
+	master = init_master(argv[1]);
+	get_cds(master);
+	window_handler(master);
 	return (0);
 }
