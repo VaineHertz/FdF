@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/20 16:27:51 by tpadilla         ###   ########.fr       */
+/*   Updated: 2016/12/20 21:42:41 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,39 +65,41 @@ void	print_cds(double *p, int option)
 		ft_putchar('\n');
 }
 
-void	line(double *p1, double *p2, fdf *master, int color)
+void	line(double *p1, double *p2, fdf *master, int color, int a)
 {
-	double	dx = ABS(p2[0] - p1[0]);
-	double	dy = ABS(p2[1] - p1[1]);
-	double	err = (dx > dy ? dx : -dy) / 2;
+	double	*temp_p1;
+	double	dxy[2];
+	double	err;
 	double	e2;
-	double	temp_x;
-	double	temp_y;
-	int		hex;
 
-	temp_x = p1[0];
-	temp_y = p1[1];
+	temp_p1 = (double *)malloc(sizeof(double) * 2);
+	temp_p1[0] = p1[0];
+	temp_p1[1] = p1[1];
+	dxy[0] = ABS(p2[0] - p1[0]);
+	dxy[1] = ABS(p2[1] - p1[1]);
+	err = (dxy[0] > dxy[1] ? dxy[0] : -dxy[1]) / 2;
 	while (1)
 	{
-		mlx_pixel_put(MLX, WIN, temp_x + TRANSLATE_X, temp_y + TRANSLATE_Y, color);
-		if ((int)temp_x == (int)p2[0] && (int)temp_y == (int)p2[1])
+		mlx_pixel_put(MLX, WIN, temp_p1[0] + TRANSLATE_X,
+				temp_p1[1] + TRANSLATE_Y, color);
+		if ((int)temp_p1[0] == (int)p2[0] && (int)temp_p1[1] == (int)p2[1])
 			break ;
 		e2 = err;
-		if (e2 > -dx)
+		if (e2 > -dxy[0])
 		{
-			err -= dy;
-			if (temp_x < p2[0])
-				temp_x += 1;
+			err -= dxy[1];
+			if (temp_p1[0] < p2[0])
+				temp_p1[0] += 1;
 			else
-				temp_x -= 1;
+				temp_p1[0] -= 1;
 		}
-		if (e2 < dy)
+		if (e2 < dxy[1])
 		{
-			err += dx;
-			if (temp_y < p2[1])
-				temp_y += 1;
+			err += dxy[0];
+			if (temp_p1[1] < p2[1])
+				temp_p1[1] += 1;
 			else
-				temp_y -= 1;
+				temp_p1[1] -= 1;
 		}
 	}
 }
@@ -112,16 +114,16 @@ void	color_check(fdf *master, double *p1, double *p2, int a, int option)
 	if (option == 1)
 	{
 		if (VALUE[a][3] > 0 && VALUE[a + 1][3] > 0)
-			line(p1, p2, master, RED);
+			line(p1, p2, master, RED, a);
 		else
-			line(p1, p2, master, BLUE);
+			line(p1, p2, master, BLUE, a);
 	}
 	else if (option == 2)
 	{
 		if (VALUE[a][3] > 0 && VALUE[a + width][3] > 0)
-			line(p1, p2, master, RED);
+			line(p1, p2, master, RED, a);
 		else
-			line(p1, p2, master, BLUE);
+			line(p1, p2, master, BLUE, a);
 	}
 }
 
@@ -142,6 +144,7 @@ void	render_image(fdf *master)
 		rotate_map(VALUE[a], master);
 		a++;
 	}
+	OPTION = -1;
 	PHI = 0;
 	a = 0;
 	while (a < TOTAL)
@@ -160,6 +163,7 @@ void	render_image(fdf *master)
 			color_check(master, temp_xy, temp_xy2, a, 2);
 		}
 		a++;
+		free(temp_xy);
 	}
 }
 
@@ -224,8 +228,10 @@ w_data	*init_window(map *cds, mod *m_cds, char *file)
 
 	mlx_w = (w_data*)malloc(sizeof(w_data));
 	mlx_w->mlx = mlx_init();
-	mlx_w->window_width = (cds->total / cds->yvalue) * m_cds->zoom * 2.5 < 1000 ? ((cds->total / cds->yvalue) * m_cds->zoom * 2.5) : 1000;
-	mlx_w->window_length = (cds->yvalue * m_cds->zoom) * 2.5 < 1000 ? ((cds->yvalue * m_cds->zoom) * 2.5) : 1000;
+	mlx_w->window_width = (cds->total / cds->yvalue) * m_cds->zoom * 2.5 < 1000
+		? ((cds->total / cds->yvalue) * m_cds->zoom * 2.5) : 1000;
+	mlx_w->window_length = (cds->yvalue * m_cds->zoom) * 2.5 < 1000
+		? ((cds->yvalue * m_cds->zoom) * 2.5) : 1000;
 	mlx_w->window = mlx_new_window(mlx_w->mlx, mlx_w->window_width,
 			mlx_w->window_length, file);
 	mlx_w->file = file;
@@ -250,7 +256,6 @@ void	get_cds(fdf *master)
 	int		fd;
 	char	*line;
 	char	**nbrline;
-	int		currentvalue;
 
 	X = 0;
 	Y = 0;
@@ -266,11 +271,10 @@ void	get_cds(fdf *master)
 		nbrline = ft_strsplit(line, ' ');
 		while (nbrline[i])
 		{
-			currentvalue = ft_atoi(nbrline[i]);
+			VALUE[a][3] = ft_atoi(nbrline[i]);
+			VALUE[a][2] = VALUE[a][3] * 60;
 			VALUE[a][0] = X - ((TOTAL / YVALUE) * 40);
 			VALUE[a][1] = Y - (YVALUE * 40);
-			VALUE[a][2] = currentvalue * 40;
-			VALUE[a][3] = currentvalue;
 			X += 80;
 			i++;
 			a++;
@@ -283,7 +287,6 @@ void	get_cds(fdf *master)
 
 void	window_handler(fdf *master)
 {
-	OPTION = -1;
 	render_image(master);
 	mlx_key_hook(WIN, key_event, master);
 	mlx_loop(MLX);
