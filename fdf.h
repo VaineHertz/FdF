@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 15:48:46 by tpadilla          #+#    #+#             */
-/*   Updated: 2016/12/20 15:11:54 by tpadilla         ###   ########.fr       */
+/*   Updated: 2017/01/11 02:09:13 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #	define OPTION master->m_cds->option
 #	define TRANSLATE_X (ORIGIN_X + (master->mlx_w->window_width / 2))
 #	define TRANSLATE_Y (ORIGIN_Y + (master->mlx_w->window_length / 2))
+#	define WIDTH (TOTAL / YVALUE)
 #	define RED 0x00FF0000
 #	define BLUE 0x000000FF
 #	define GREEN 0x0000FF00
@@ -44,6 +45,7 @@ typedef struct	twodee_map
 {
 	double	x;
 	double	y;
+	double	max_height;
 	double	origin_x;
 	double	origin_y;
 	double	**value;
@@ -69,11 +71,22 @@ typedef struct	window_data
 	char	*file;
 }			w_data;
 
+typedef struct	image_data
+{
+	void	*image_p;
+	char	*image_char_p;
+	int		bpp;
+	int		size_line;
+	int		endian;
+}			img;
+
+
 typedef struct	wireframe_data
 {
 	map		*cds;
 	mod		*m_cds;
 	w_data	*mlx_w;
+	img		*imge;
 }			fdf;
 
 void	key_message(int keycode, fdf *master);
