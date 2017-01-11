@@ -12,28 +12,6 @@
 
 #include "fdf.h"
 
-void	key_message(int keycode, fdf *master)
-{
-	if (keycode == 116 || keycode == 121)
-	{
-		if (PAN_ACCEL == 40)
-			ft_putendl("\nPan & Zoom acceleration is fast");
-		else if (PAN_ACCEL == 20)
-			ft_putendl("\nPan & Zoom acceleration is medium");
-		else if (PAN_ACCEL == 5)
-			ft_putendl("\nPan & Zoom acceleration is slow");
-	}
-	else if (keycode == 119 || keycode == 115)
-	{
-		if (PHI_M == 0.1)
-			ft_putendl("\nRotation acceleration is slow");
-		else if (PHI_M == 0.3)
-			ft_putendl("\nRotation acceleration is medium");
-		else if (PHI_M == 0.5)
-			ft_putendl("\nRotation acceleration is fast");
-	}
-}
-
 void	key_rotate(int keycode, fdf *master)
 {
 	if (keycode != 90)
@@ -79,11 +57,8 @@ void	key_transform(int keycode, fdf *master)
 		ZOOM -= PAN_ACCEL / 2;
 }
 
-int		key_speed(int keycode, fdf *master)
+void	set_pan_accel(int keycode, fdf *master)
 {
-	int skip;
-
-	skip = 0;
 	if (keycode == 121)
 	{
 		if (PAN_ACCEL == 20)
@@ -98,6 +73,15 @@ int		key_speed(int keycode, fdf *master)
 		else if (PAN_ACCEL == 20)
 			PAN_ACCEL = 40;
 	}
+}
+
+int		key_speed(int keycode, fdf *master)
+{
+	int skip;
+
+	skip = 0;
+	if (keycode == 121 || keycode == 116)
+		set_pan_accel(keycode, master);
 	else if (keycode == 115)
 	{
 		if (ABS(PHI_M) == 0.1)
@@ -130,6 +114,15 @@ int		key_event(int keycode, fdf *master)
 		exit(0);
 	key_message(keycode, master);
 	if (!skip)
+	{
+		master->imge->image_p = mlx_new_image(master->mlx_w->mlx,
+			master->mlx_w->window_width, master->mlx_w->window_length);
+		master->imge->image_char_p = mlx_get_data_addr(master->imge->image_p,
+			&master->imge->bpp, &master->imge->size_line,
+			&master->imge->endian);
 		render_image(master);
+		mlx_put_image_to_window(MLX, WIN, master->imge->image_p, 0, 0);
+		mlx_destroy_image(MLX, master->imge->image_p);
+	}
 	return (0);
 }

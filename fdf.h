@@ -6,7 +6,7 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 15:48:46 by tpadilla          #+#    #+#             */
-/*   Updated: 2017/01/11 02:09:13 by tpadilla         ###   ########.fr       */
+/*   Updated: 2017/01/11 04:09:19 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #	include "minilibx_macos/mlx.h"
 #	include <fcntl.h>
 #	include <math.h>
+#	include <stdio.h>
 #	define X master->cds->x
 #	define Y master->cds->y
 #	define MLX master->mlx_w->mlx
@@ -38,8 +39,6 @@
 #	define BLUE 0x000000FF
 #	define GREEN 0x0000FF00
 #	define ABS(a) ((a)<0?(-(a)):(a))
-#	include <stdio.h>
-#	include <math.h>
 
 typedef struct	twodee_map
 {
@@ -89,8 +88,27 @@ typedef struct	wireframe_data
 	img		*imge;
 }			fdf;
 
-void	key_message(int keycode, fdf *master);
+double	*ortho_proj(double *og_xyz, fdf *master);
+double	*rotate_map(double *og_xyz, fdf *master);
+void	window_handler(fdf *master);
 int		key_event(int keycode, fdf *master);
+void	key_message(int keycode, fdf *master);
+void	key_rotate(int keycode, fdf *master);
+void	key_transform(int keycode, fdf *master);
+int		key_speed(int keycode, fdf *master);
+void	set_pan_accel(int keycode, fdf *master);
+void	intro_message(char *mapname);
+int		*get_xy(char *file);
 void	render_image(fdf *master);
+char	*ommit_directories(char *str);
+map		*init_map(char *file);
+mod		*init_mod(void);
+w_data	*init_window(map *cds, mod *m_cds, char *file);
+img		*init_image(w_data *mlx_w);
+fdf		*init_master(char *file);
+void	get_cds(fdf *master);
+void	assign_cds(fdf *master, char **nbrline, int *a);
+int		check_format(fdf *master);
+void	is_number(char *str);
 
 #endif
