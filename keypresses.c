@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-void	key_rotate(int keycode, fdf *master)
+void	key_rotate(int keycode, t_fdf *master)
 {
 	if (keycode != 90)
 		PHI = PHI_M;
@@ -39,7 +39,7 @@ void	key_rotate(int keycode, fdf *master)
 	}
 }
 
-void	key_transform(int keycode, fdf *master)
+void	key_transform(int keycode, t_fdf *master)
 {
 	if (keycode > 85 && keycode < 93)
 		key_rotate(keycode, master);
@@ -57,7 +57,7 @@ void	key_transform(int keycode, fdf *master)
 		ZOOM -= PAN_ACCEL / 2;
 }
 
-void	set_pan_accel(int keycode, fdf *master)
+void	set_pan_accel(int keycode, t_fdf *master)
 {
 	if (keycode == 121)
 	{
@@ -75,7 +75,7 @@ void	set_pan_accel(int keycode, fdf *master)
 	}
 }
 
-int		key_speed(int keycode, fdf *master)
+int		key_speed(int keycode, t_fdf *master)
 {
 	int skip;
 
@@ -101,7 +101,7 @@ int		key_speed(int keycode, fdf *master)
 	return (skip);
 }
 
-int		key_event(int keycode, fdf *master)
+int		key_event(int keycode, t_fdf *master)
 {
 	int	skip;
 

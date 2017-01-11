@@ -6,13 +6,13 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/11 03:49:16 by tpadilla          #+#    #+#             */
-/*   Updated: 2017/01/11 03:49:19 by tpadilla         ###   ########.fr       */
+/*   Updated: 2017/01/11 05:07:11 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int		*get_color(double z, fdf *master)
+int		*get_color(double z, t_fdf *master)
 {
 	int	color;
 	int	*rgb;
@@ -31,7 +31,7 @@ int		*get_color(double z, fdf *master)
 	return (rgb);
 }
 
-void	pixel_to_image(fdf *master, int x, int y, int z)
+void	pixel_to_image(t_fdf *master, int x, int y, int z)
 {
 	int		i;
 	int		*color;
@@ -48,7 +48,7 @@ void	pixel_to_image(fdf *master, int x, int y, int z)
 	}
 }
 
-void	line(double *pt1, double *pt2, fdf *master)
+void	line(double *pt1, double *pt2, t_fdf *master)
 {
 	int		xyz_diff[3];
 	int		length;
@@ -89,7 +89,7 @@ void	line(double *pt1, double *pt2, fdf *master)
 ** leftmost of the next row underneath
 */
 
-void	connect_line(fdf *master, int a, int *c)
+void	connect_line(t_fdf *master, int a, int *c)
 {
 	double	*temp_xy;
 	double	*temp_xy2;
@@ -115,7 +115,7 @@ void	connect_line(fdf *master, int a, int *c)
 	free(temp_xy);
 }
 
-void	render_image(fdf *master)
+void	render_image(t_fdf *master)
 {
 	int		a;
 	int		c;

@@ -25,7 +25,7 @@ void	is_number(char *str)
 		}
 }
 
-int		check_format(fdf *master)
+int		check_format(t_fdf *master)
 {
 	if ((int)TOTAL % (int)YVALUE != 0)
 	{

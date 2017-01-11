@@ -6,11 +6,20 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/11 03:49:23 by tpadilla          #+#    #+#             */
-/*   Updated: 2017/01/11 04:44:48 by tpadilla         ###   ########.fr       */
+/*   Updated: 2017/01/11 05:40:53 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+void	error(int message)
+{
+	if (message == 0)
+		ft_putendl("error: invalid map (file not accessible)");
+	else if (message == 1)
+		ft_putendl("error: invalid map (file is empty)");
+	exit(0);
+}
 
 int		*get_xy(char *file)
 {
@@ -24,7 +33,8 @@ int		*get_xy(char *file)
 	xy[0] = 0;
 	xy[1] = 0;
 	i = 0;
-	fd = open(file, O_RDONLY);
+	if ((fd = open(file, O_RDONLY)) < 0)
+		error(0);
 	while (get_next_line(fd, &line))
 	{
 		nbrline = ft_strsplit(line, ' ');
@@ -39,7 +49,7 @@ int		*get_xy(char *file)
 	return (xy);
 }
 
-void	assign_cds(fdf *master, char **nbrline, int *a)
+void	assign_cds(t_fdf *master, char **nbrline, int *a)
 {
 	int		i;
 
@@ -60,7 +70,7 @@ void	assign_cds(fdf *master, char **nbrline, int *a)
 	X = 0;
 }
 
-void	get_cds(fdf *master)
+void	get_cds(t_fdf *master)
 {
 	int		i;
 	int		a;

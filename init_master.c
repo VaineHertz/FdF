@@ -12,13 +12,15 @@
 
 #include "fdf.h"
 
-map		*init_map(char *file)
+t_map		*init_map(char *file)
 {
-	map		*cds;
+	t_map	*cds;
 	int		*xy;
 
-	cds = (map*)malloc(sizeof(map));
+	cds = (t_map*)malloc(sizeof(t_map));
 	xy = get_xy(file);
+	if (!xy[0])
+		error(1);
 	cds->yvalue = xy[1];
 	cds->total = xy[0];
 	cds->max_height = 0;
@@ -29,11 +31,11 @@ map		*init_map(char *file)
 	return (cds);
 }
 
-mod		*init_mod(void)
+t_mod		*init_mod(void)
 {
-	mod	*m_cds;
+	t_mod	*m_cds;
 
-	m_cds = (mod*)malloc(sizeof(mod));
+	m_cds = (t_mod*)malloc(sizeof(t_mod));
 	m_cds->pan_accelaration = 20;
 	m_cds->zoom = 20;
 	m_cds->phi = 0.1;
@@ -42,12 +44,12 @@ mod		*init_mod(void)
 	return (m_cds);
 }
 
-w_data	*init_window(map *cds, mod *m_cds, char *file)
+t_w_data	*init_window(t_map *cds, t_mod *m_cds, char *file)
 {
-	w_data	*mlx_w;
-	char	*mapname;
+	t_w_data	*mlx_w;
+	char		*mapname;
 
-	mlx_w = (w_data*)malloc(sizeof(w_data));
+	mlx_w = (t_w_data*)malloc(sizeof(t_w_data));
 	mlx_w->mlx = mlx_init();
 	mlx_w->window_width = (cds->total / cds->yvalue) * m_cds->zoom * 2.5 < 1000
 		? ((cds->total / cds->yvalue) * m_cds->zoom * 2.5) : 1000;
@@ -60,11 +62,11 @@ w_data	*init_window(map *cds, mod *m_cds, char *file)
 	return (mlx_w);
 }
 
-img		*init_image(w_data *mlx_w)
+t_img		*init_image(t_w_data *mlx_w)
 {
-	img *imge;
+	t_img *imge;
 
-	imge = (img*)malloc(sizeof(img));
+	imge = (t_img*)malloc(sizeof(t_img));
 	imge->image_p = mlx_new_image(mlx_w->mlx,
 			mlx_w->window_width, mlx_w->window_length);
 	imge->image_char_p = mlx_get_data_addr(imge->image_p,
@@ -72,11 +74,11 @@ img		*init_image(w_data *mlx_w)
 	return (imge);
 }
 
-fdf		*init_master(char *file)
+t_fdf		*init_master(char *file)
 {
-	fdf		*master;
+	t_fdf		*master;
 
-	master = (fdf*)malloc(sizeof(fdf));
+	master = (t_fdf*)malloc(sizeof(t_fdf));
 	master->cds = init_map(file);
 	master->m_cds = init_mod();
 	master->mlx_w = init_window(master->cds, master->m_cds, file);

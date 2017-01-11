@@ -6,13 +6,22 @@
 /*   By: tpadilla <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 16:50:44 by tpadilla          #+#    #+#             */
-/*   Updated: 2017/01/11 04:31:38 by tpadilla         ###   ########.fr       */
+/*   Updated: 2017/01/11 05:18:43 by tpadilla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-double	*ortho_proj(double *og_xyz, fdf *master)
+/*
+** Orthographic projection is parallel projection where you perception of an
+** object's size is not distorted by perspective, all parallel lines will stay
+** parallel
+**
+** This formula can be boiled down to x = x, and y = z.
+** This makes it so that the 3d points can be represented by 2d points.
+*/
+
+double	*ortho_proj(double *og_xyz, t_fdf *master)
 {
 	double	*temp_xy;
 	double	temp_z;
@@ -27,7 +36,7 @@ double	*ortho_proj(double *og_xyz, fdf *master)
 	return (temp_xy);
 }
 
-double	*rotate_map(double *og_xyz, fdf *master)
+double	*rotate_map(double *og_xyz, t_fdf *master)
 {
 	double	temp_xyz[3];
 
@@ -52,7 +61,7 @@ double	*rotate_map(double *og_xyz, fdf *master)
 	return (og_xyz);
 }
 
-void	window_handler(fdf *master)
+void	window_handler(t_fdf *master)
 {
 	render_image(master);
 	mlx_put_image_to_window(MLX, WIN, master->imge->image_p, 0, 0);
@@ -63,7 +72,7 @@ void	window_handler(fdf *master)
 
 int		main(int argc, char **argv)
 {
-	fdf		*master;
+	t_fdf		*master;
 
 	if (argc != 2)
 	{

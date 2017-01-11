@@ -52,7 +52,7 @@ void	intro_message(char *mapname)
 	ft_putendl("\nPress esc to quit");
 }
 
-void	key_message(int keycode, fdf *master)
+void	key_message(int keycode, t_fdf *master)
 {
 	if (keycode == 116 || keycode == 121)
 	{
